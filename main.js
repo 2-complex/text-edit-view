@@ -1,7 +1,7 @@
 
 function()
 {
-    TextEditViewApp = function()
+    var TextEditViewApp = function()
     {
         this.textView = null;
     }
