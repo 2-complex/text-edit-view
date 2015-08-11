@@ -1,5 +1,5 @@
 
-function()
+(function()
 {
     var TextEditViewApp = function()
     {
@@ -16,7 +16,7 @@ function()
 
     TextEditViewApp.prototype.launch = function(containerDiv)
     {
-        containerDiv.style.backgroundColor = "#eee";
+        containerDiv.style.backgroundColor = "#ee1";
         this.textView = makeTextView("my-text-view-div", "fill")
         containerDiv.appendChild( this.textView );
     }
@@ -33,5 +33,5 @@ function()
     }
 
     return TextEditViewApp;
-}
+})()
 
