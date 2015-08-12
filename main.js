@@ -1,33 +1,100 @@
 
 (function()
 {
-    var TextEditViewApp = function()
+    function loadScript(src, callback)
     {
-        this.textView = null;
+        var scriptElement = document.createElement('script');
+        scriptElement.onreadystatechange = scriptElement.onload = function()
+        {
+            var state = scriptElement.readyState;
+            if ( ! callback.done && ( ! state || /loaded|complete/.test(state)))
+            {
+                callback.done = true;
+                callback();
+            }
+        };
+        scriptElement.src = src;
+        scriptElement.async = true;
+        document.getElementsByTagName('head')[0].appendChild(scriptElement);
+    }
+
+    var Editor = function Editor() {}
+
+    var myEditorTimeoutVar = null;
+
+    Editor.changedEventTrap = function(e)
+    {
+        if( myEditorTimeoutVar )
+        {
+            window.clearTimeout(myEditorTimeoutVar);
+        }
+        myEditorTimeoutVar = window.setTimeout(Editor.changed, 200);
+    }
+
+    Editor.changed = function()
+    {
+        var editor = ace.edit("editor");
+        var annotations = editor.getSession().getAnnotations();
+    }
+
+    Editor.initEditor = function()
+    {
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/twilight");
+        editor.getSession().setMode("ace/mode/json");
+        Editor.aceEditor = editor;
+
+        editor.getSession().on("changeAnnotation", Editor.changedEventTrap);
+
+        editor.commands.addCommand(
+        {
+            name: 'saveFile',
+            bindKey: {
+                win: 'Ctrl-S',
+                mac: 'Command-S',
+                sender: 'editor|cli'
+            },
+            exec: function(env, args, request)
+            {
+                // Here's where we'd save
+                // data: Editor.aceEditor.getSession().getValue(),
+                // file_path: Editor.currentPath},
+            }
+        });
+    }
+
+    var TextEditViewApp = function(editorDiv)
+    {
+        this.editorDiv = editorDiv;
     }
 
     TextEditViewApp.makeTextView = function(idName, className)
     {
         var elem = document.createElement('div');
         elem.id = idName;
-        elem.class = className;
+        elem.classList.add(className);
         return elem;
     }
 
-    TextEditViewApp.prototype.launch = function(containerDiv)
+    TextEditViewApp.launch = function(containerDiv, receiveApp)
     {
-        containerDiv.style.backgroundColor = "#ee1";
-        this.textView = makeTextView("my-text-view-div", "fill")
-        containerDiv.appendChild( this.textView );
+        var editorDiv = TextEditViewApp.makeTextView("editor", "fill");
+        containerDiv.appendChild( editorDiv );
+
+        loadScript("ace-builds/src-noconflict/ace.js", function()
+        {
+            Editor.initEditor();
+            receiveApp(new TextEditViewApp(editorDiv));
+        });
     }
 
     TextEditViewApp.prototype.open = function(fileAccess)
     {
         var thisApp = this;
         fileAccess.download(
-            function(text)
+            function( text )
             {
-                // assign text to view here
+                Editor.aceEditor.getSession().setValue(text);
             }
         );
     }

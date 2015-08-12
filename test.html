@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>
+            The App
+        </title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <style>
+            .fill {
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <div id="app-container" class="fill"></div>
+    </body>
+
+    <script>
+    var appContainer = document.getElementById("app-container");
+    var fileAccess =
+    {
+        download: function(callback)
+        {
+            callback("Here's my beautiful code!");
+        }
+    }
+
+    xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.open("GET", "main.js", true);
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            var AppClass = eval(xmlhttp.responseText);
+            AppClass.launch(appContainer, function(app)
+            {
+                app.open(fileAccess);
+            });
+        }
+    }
+
+    xmlhttp.send();
+
+    </script>
+
+</html>
+
