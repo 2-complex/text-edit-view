@@ -27,7 +27,27 @@
         {
             callback("Here's my beautiful code!");
         }
-    }
+    };
+
+    var loader =
+    {
+        loadScript: function( src, callback )
+        {
+            var scriptElement = document.createElement('script');
+            scriptElement.onreadystatechange = scriptElement.onload = function()
+            {
+                var state = scriptElement.readyState;
+                if ( ! callback.done && ( ! state || /loaded|complete/.test(state)))
+                {
+                    callback.done = true;
+                    callback();
+                }
+            };
+            scriptElement.src = src;
+            scriptElement.async = true;
+            document.getElementsByTagName('head')[0].appendChild(scriptElement);
+        }
+    };
 
     xmlhttp = new XMLHttpRequest();
 
@@ -37,7 +57,7 @@
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             var AppClass = eval(xmlhttp.responseText);
-            AppClass.launch(appContainer, function(app)
+            AppClass.launch(loader, appContainer, function(app)
             {
                 app.open(fileAccess);
             });

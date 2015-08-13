@@ -1,23 +1,6 @@
 
 (function()
 {
-    function loadScript(src, callback)
-    {
-        var scriptElement = document.createElement('script');
-        scriptElement.onreadystatechange = scriptElement.onload = function()
-        {
-            var state = scriptElement.readyState;
-            if ( ! callback.done && ( ! state || /loaded|complete/.test(state)))
-            {
-                callback.done = true;
-                callback();
-            }
-        };
-        scriptElement.src = src;
-        scriptElement.async = true;
-        document.getElementsByTagName('head')[0].appendChild(scriptElement);
-    }
-
     var Editor = function Editor() {}
 
     var myEditorTimeoutVar = null;
@@ -76,12 +59,12 @@
         return elem;
     }
 
-    TextEditViewApp.launch = function(containerDiv, receiveApp)
+    TextEditViewApp.launch = function(loader, containerDiv, receiveApp)
     {
         var editorDiv = TextEditViewApp.makeTextView("editor", "fill");
         containerDiv.appendChild( editorDiv );
 
-        loadScript("ace-builds/src-noconflict/ace.js", function()
+        loader.loadScript("ace-builds/src-noconflict/ace.js", function()
         {
             Editor.initEditor();
             receiveApp(new TextEditViewApp(editorDiv));
