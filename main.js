@@ -74,6 +74,9 @@
     TextEditViewApp.prototype.open = function(fileAccess)
     {
         var thisApp = this;
+
+        editor.getSession().setMode( "ace/mode/" + fileAccess.getExtension() );
+
         fileAccess.download(
             function( text )
             {
