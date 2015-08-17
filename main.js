@@ -64,18 +64,25 @@
         var editorDiv = TextEditViewApp.makeTextView("editor", "fill");
         containerDiv.appendChild( editorDiv );
 
-        loader.loadScript("ace-builds/src-noconflict/ace.js", function()
-        {
-            Editor.initEditor();
-            receiveApp(new TextEditViewApp(editorDiv));
-        });
+        loader.loadScripts([
+            "ace-builds/src/ace.js",
+            "ace-builds/src/ext-modelist.js",
+            ],
+            function()
+            {
+                Editor.initEditor();
+                receiveApp(new TextEditViewApp(editorDiv));
+            });
     }
 
     TextEditViewApp.prototype.open = function(fileAccess)
     {
         var thisApp = this;
 
-        editor.getSession().setMode( "ace/mode/" + fileAccess.getExtension() );
+        var modelist = ace.require("ace/ext/modelist");
+        var editor = ace.edit("editor");
+        var mode = modelist.getModeForPath(fileAccess.getPath()).mode;
+        editor.getSession().setMode(mode);
 
         fileAccess.download(
             function( text )

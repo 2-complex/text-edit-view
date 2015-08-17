@@ -20,13 +20,39 @@
     </body>
 
     <script>
+
+    var Path = Path || {};
+
+
+    function replaceAll(string, find, replace)
+    {
+        return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    }
+
+    Path.join = function(a, b)
+    {
+        if ( a == "" )
+            return b;
+        return replaceAll(a.split('/').concat(b.split('/')).join('/'), '//', '/')
+    }
+
     var appContainer = document.getElementById("app-container");
     var fileAccess =
     {
         download: function(callback)
         {
-            callback("Here's my beautiful code!");
-        }
+            callback("class Apple{public: Apple();};");
+        } ,
+
+        getPath: function()
+        {
+            return "drive/stuff/file.cpp";
+        } ,
+
+        getExtension: function()
+        {
+            return "drive/stuff/cpp";
+        } ,
     };
 
     var loader =
@@ -46,7 +72,23 @@
             scriptElement.src = src;
             scriptElement.async = true;
             document.getElementsByTagName('head')[0].appendChild(scriptElement);
-        }
+        } ,
+
+        loadScripts: function( srcs, callback )
+        {
+            var self = this;
+            if( srcs.length == 0 )
+            {
+                callback();
+            }
+            else
+            {
+                self.loadScript(srcs[0], function()
+                {
+                    self.loadScripts(srcs.slice(1), callback);
+                } );
+            }
+        } ,
     };
 
     xmlhttp = new XMLHttpRequest();
