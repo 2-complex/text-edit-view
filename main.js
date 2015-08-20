@@ -72,8 +72,8 @@
         editorBody.append( editorDiv );
 
         loader.loadScripts([
-            "ace-builds/src-min/ace.js",
-            "ace-builds/src-min/ext-modelist.js",
+            "ace/src-min/ace.js",
+            "ace/src-min/ext-modelist.js",
             ],
             function()
             {
