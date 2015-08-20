@@ -46,9 +46,10 @@
         });
     }
 
-    var TextEditViewApp = function(editorDiv)
+    var TextEditViewApp = function(editorDiv, saveButton)
     {
         this.editorDiv = editorDiv;
+        this.saveButton = saveButton;
     }
 
     TextEditViewApp.makeTextView = function(idName, className)
@@ -61,8 +62,14 @@
 
     TextEditViewApp.launch = function(loader, containerDiv, receiveApp)
     {
+        var menuBar = $('<div style="display: inline-block; position: absolute; left:0px; right:0px; top:0px; height: 2em; line-height: 2em; background-color: #333; color:white;">').appendTo(containerDiv);
+        var editorBody = $('<div style="display: inline-block; position: absolute; left:0px; right:0px; top:2em; bottom: 0px; background-color: black;">').appendTo(containerDiv);
         var editorDiv = TextEditViewApp.makeTextView("editor", "fill");
-        containerDiv.appendChild( editorDiv );
+        var saveButton = $("<span>").css({cursor:'hand', verticalAlign:'middle',margin:'1em'}).html("Save");
+
+        menuBar.append(saveButton);
+        saveButton.css({color:"#555"});
+        editorBody.append( editorDiv );
 
         loader.loadScripts([
             "ace-builds/src/ace.js",
@@ -71,8 +78,9 @@
             function()
             {
                 Editor.initEditor();
-                receiveApp(new TextEditViewApp(editorDiv));
-            });
+                receiveApp(new TextEditViewApp(editorDiv, saveButton));
+            }
+        );
     }
 
     TextEditViewApp.prototype.open = function(fileAccess)
@@ -88,6 +96,13 @@
             function( text )
             {
                 Editor.aceEditor.getSession().setValue(text);
+                thisApp.saveButton.css({color:"#eee"});
+                thisApp.saveButton.on('click',
+                    function()
+                    {
+                        fileAccess.save( Editor.aceEditor.getSession().getValue() );
+                    }
+                );
             }
         );
     }
