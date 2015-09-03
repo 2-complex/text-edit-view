@@ -85,13 +85,12 @@
 
     TextEditViewApp.prototype.open = function(fileAccess)
     {
-        var thisApp = this;
-
         var modelist = ace.require("ace/ext/modelist");
         var editor = ace.edit("editor");
         var mode = modelist.getModeForPath(fileAccess.getPath()).mode;
         editor.getSession().setMode(mode);
 
+        var thisApp = this;
         fileAccess.download(
             function( text )
             {
@@ -103,9 +102,19 @@
                         fileAccess.save( Editor.aceEditor.getSession().getValue() );
                     }
                 );
-                editor.focus();
             }
         );
+    }
+
+    TextEditViewApp.prototype.focus = function()
+    {
+        var editor = ace.edit("editor");
+        editor.focus();
+    }
+
+    TextEditViewApp.prototype.resize = function(width, height)
+    {
+        console.log("resize " + width + " , " + height);
     }
 
     return TextEditViewApp;
