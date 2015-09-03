@@ -103,6 +103,7 @@
                         fileAccess.save( Editor.aceEditor.getSession().getValue() );
                     }
                 );
+                editor.focus();
             }
         );
     }
