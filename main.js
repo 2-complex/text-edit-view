@@ -114,7 +114,6 @@
 
     TextEditViewApp.prototype.resize = function(width, height)
     {
-        console.log("resize " + width + " , " + height);
     }
 
     return TextEditViewApp;
